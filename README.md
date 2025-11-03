@@ -1,16 +1,16 @@
 Here's how to set this up 
 
-1️⃣ Clone the Repository
-git clone https://github.com/yourusername/[InsightVault.git](https://github.com/Iamaksingh/InsightVault)
+1️⃣ Clone the Repository 
+git clone https://github.com/Iamaksingh/InsightVault.git
 cd InsightVault
 
-2️⃣ Backend Setup
+2️⃣ Backend Setup -> 
 cd backend
 npm i
-# since this is just for an assignment i have added .env in the repository itself so as the user does not have to setup anything. 
 npm run dev
+# since this is just for an assignment i have added .env in the repository itself so as the user does not have to setup anything. 
 
-3️⃣ Frontend Setup
+3️⃣ Frontend Setup ->
 cd front
 npm i
 npm run dev
