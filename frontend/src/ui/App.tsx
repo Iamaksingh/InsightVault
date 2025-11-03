@@ -23,7 +23,7 @@ type Entry = {
 
 type Preference = { userId: string; theme: 'light' | 'dark' | 'system'; accentColor: string };
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE = 'https://insightvault.onrender.com';
 
 function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => (localStorage.getItem('theme') as any) || 'system');
