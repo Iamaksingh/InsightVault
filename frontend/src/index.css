@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --accent-color: #7c3aed;
+  /* shadcn-like vars for borders/backgrounds */
+  --border: 240 5.9% 90%;
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+}
+
+html.dark {
+  color-scheme: dark;
+  --border: 240 3.7% 15.9%;
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+}
+
+body {
+	min-height: 100vh;
+	background-color: hsl(var(--background));
+	color: hsl(var(--foreground));
+}
+
+* {
+	border-color: hsl(var(--border));
+}
+
+/* Enforce light-mode backgrounds for key surfaces */
+html:not(.dark) .va-card { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
+html:not(.dark) input, html:not(.dark) textarea { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
+html:not(.dark) ::placeholder { color: #6b7280 !important; }
+/* Force auth toggle styling in light mode */
+html:not(.dark) .auth-toggle { color: #000 !important; background-color: #fff !important; border-color: #e5e7eb !important; }
+html:not(.dark) .auth-toggle:hover { color: #fff !important; background-color: #000 !important; }
+
+
