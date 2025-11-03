@@ -42,4 +42,4 @@ The application is divided into two layers:
 
 Postman Documentation for testing : https://documenter.getpostman.com/view/47011916/2sB3WpSMbx
 
-Demo URL: 
+Demo URL: insightvaults.netlify.app
