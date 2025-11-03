@@ -1,6 +1,5 @@
 Here's how to set this up 
 
-
 1️⃣ Clone the Repository
 git clone https://github.com/yourusername/[InsightVault.git](https://github.com/Iamaksingh/InsightVault)
 cd InsightVault
@@ -41,5 +40,6 @@ The application is divided into two layers:
     Data (title, description, category, and timestamps) is stored in a MongoDB Atlas database.
     The backend is lightweight and modular, designed with route separation and Mongoose models for scalability.
 
+Postman Documentation for testing : https://documenter.getpostman.com/view/47011916/2sB3WpSMbx
 
-Demo URL
+Demo URL: 
