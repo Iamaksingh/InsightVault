@@ -42,9 +42,12 @@ html:not(.dark) .auth-toggle:hover { color: #fff !important; background-color: #
 /* Force black text for description and tags in light mode */
 html:not(.dark) .va-desc { color: #000 !important; }
 html:not(.dark) .tag-chip { color: #000 !important; }
+html:not(.dark) .va-alert { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
 
 /* Ensure icon buttons are black by default in light mode and flip to white on hover */
 html:not(.dark) .icon-btn { color: #000 !important; background-color: transparent !important; }
 html:not(.dark) .icon-btn:hover { color: #fff !important; background-color: #000 !important; }
+html.dark .icon-btn { color: #fff !important; background-color: transparent !important; }
+html.dark .icon-btn:hover { color: #fff !important; background-color: #262626 !important; }
 
 
