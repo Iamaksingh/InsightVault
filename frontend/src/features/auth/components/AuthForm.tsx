@@ -51,7 +51,7 @@ export function AuthForm({ onAuthed }: { onAuthed?: () => void }) {
 				</div>
 				{error && <p className="text-sm text-red-600">{error}</p>}
 				<div className="flex justify-between">
-					<button type="button" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="auth-toggle rounded-md border px-3 py-2 text-sm text-black hover:text-white hover:bg-black dark:text-white dark:hover:text-white dark:hover:bg-neutral-800">
+					<button type="button" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="auth-toggle rounded-md border px-3 py-2 text-sm hover:text-white hover:bg-black dark:text-white dark:hover:text-white dark:hover:bg-neutral-800">
 						{mode === 'login' ? 'Create account' : 'Have an account? Login'}
 					</button>
 					<Button type="submit">{mode === 'login' ? 'Login' : 'Register'}</Button>
