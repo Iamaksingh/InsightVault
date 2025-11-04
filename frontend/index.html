@@ -5,17 +5,24 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InsightVault</title>
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('theme') || 'system';
+          var root = document.documentElement;
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = savedTheme === 'system' ? (prefersDark ? 'dark' : 'light') : savedTheme;
+          root.classList.remove('dark');
+          if (theme === 'dark') root.classList.add('dark');
+
+          var savedAccent = localStorage.getItem('accentColor') || '#7c3aed';
+          root.style.setProperty('--accent-color', savedAccent);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body class="min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
-  <script>
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    const root = document.documentElement;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = savedTheme === 'system' ? (prefersDark ? 'dark' : 'light') : savedTheme;
-    root.classList.remove('dark');
-    if (theme === 'dark') root.classList.add('dark');
-  </script>
 </html>

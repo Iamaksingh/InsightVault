@@ -45,6 +45,7 @@ function Auth({ onAuthed }: { onAuthed: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { theme, setTheme } = useTheme();
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -64,7 +65,18 @@ function Auth({ onAuthed }: { onAuthed: () => void }) {
   };
   return (
     <div className="mx-auto mt-24 max-w-sm rounded-lg border p-6 dark:border-neutral-800">
-      <h2 className="mb-4 text-xl font-semibold">{mode === 'login' ? 'Login' : 'Create account'}</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">{mode === 'login' ? 'Login' : 'Create account'}</h2>
+        <Button
+          aria-label="Toggle theme"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          size="icon"
+          variant="outline"
+          className="text-neutral-900 dark:text-neutral-100"
+        >
+          {theme === 'dark' ? <Sun size={16} color="#ffffff" /> : <Moon size={16} color="#000000" />}
+        </Button>
+      </div>
       <form className="space-y-3" onSubmit={submit}>
         <div className="grid gap-1.5">
           <label className="text-sm">Email</label>
@@ -102,16 +114,24 @@ export function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const pickerHideTimer = React.useRef<number | null>(null);
+  const [viewing, setViewing] = useState<Entry | null>(null);
 
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    entries.forEach((e) => set.add(e.category));
-    return ['all', ...Array.from(set).sort()];
-  }, [entries]);
+  const [categoriesList, setCategoriesList] = useState<string[]>(['all']);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--accent-color', accent);
   }, [accent]);
+
+  const loadCategories = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const res = await apiFetch(`${API_BASE}/api/entries`);
+    if (!res.ok) return;
+    const data: Entry[] = await res.json();
+    const set = new Set<string>();
+    data.forEach((e) => set.add(e.category));
+    setCategoriesList(['all', ...Array.from(set).sort()]);
+  };
 
   // load preferences
   useEffect(() => {
@@ -165,10 +185,14 @@ export function App() {
 
   useEffect(() => {
     load();
+    loadCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   const { add } = useToast();
+  const CATEGORY_MAX = 24;
+  const TAG_MAX = 16;
+  const TAGS_MAX = 8;
   const normalizeUrl = (value: string): string => {
     const v = value.trim();
     if (!v) return '';
@@ -178,15 +202,32 @@ export function App() {
   const onSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     const form = new FormData(ev.currentTarget);
+    const rawTags = String(form.get('tags') || '')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+    const category = String(form.get('category') || 'General').trim();
+
+    // validations
+    if (category.length > CATEGORY_MAX) {
+      add({ title: `Category too long (max ${CATEGORY_MAX})` });
+      return;
+    }
+    if (rawTags.length > TAGS_MAX) {
+      add({ title: `Too many tags (max ${TAGS_MAX})` });
+      return;
+    }
+    if (rawTags.some((t) => t.length > TAG_MAX)) {
+      add({ title: `Each tag must be ≤ ${TAG_MAX} characters` });
+      return;
+    }
+
     const payload: Entry = {
       title: String(form.get('title') || ''),
       description: String(form.get('description') || ''),
-      category: String(form.get('category') || 'General'),
+      category,
       link: normalizeUrl(String(form.get('link') || '')) || undefined,
-      tags: String(form.get('tags') || '')
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
+      tags: rawTags,
     };
     if (editing?._id) {
       const res = await apiFetch(`${API_BASE}/api/entries/${editing._id}`, {
@@ -204,6 +245,7 @@ export function App() {
     setShowDialog(false);
     setEditing(null);
     await load();
+    await loadCategories();
   };
 
   const filtered = useMemo(() => {
@@ -234,9 +276,9 @@ export function App() {
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               size="icon"
               variant="outline"
-              className="text-neutral-900 dark:text-neutral-100"
+              className="icon-btn bg-transparent text-neutral-900 hover:text-white hover:bg-black dark:text-neutral-100 dark:hover:bg-neutral-800"
             >
-              {theme === 'dark' ? <Sun size={16} color="#ffffff" /> : <Moon size={16} color="#000000" />}
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </Button>
           </div>
           <div
@@ -283,15 +325,15 @@ export function App() {
           >
             <Plus size={16} /> Add Entry
           </Button>
-          <Button variant="outline" size="icon" className="text-neutral-900 dark:text-neutral-100" onClick={() => { clearAuthToken(); window.location.reload(); }} title="Logout">
-            <LogOut size={16} color={theme === 'dark' ? '#ffffff' : '#000000'} />
+          <Button variant="outline" size="icon" className="icon-btn bg-transparent text-neutral-900 hover:text-white hover:bg-black dark:text-neutral-100 dark:hover:bg-neutral-800" onClick={() => { clearAuthToken(); window.location.reload(); }} title="Logout">
+            <LogOut size={16} />
           </Button>
         </div>
       </header>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
-          {categories.map((c) => (
+          {categoriesList.map((c) => (
             <button
               key={c}
               onClick={() => setCategory(c)}
@@ -337,34 +379,45 @@ export function App() {
         {filtered.map((e) => (
           <article key={e._id} className="va-card rounded-lg border bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
             <div className="mb-2 flex items-start justify-between">
-              <h3 className="text-lg font-semibold">{e.title}</h3>
+              <h3 className="text-lg font-semibold break-anywhere line-clamp-2">{e.title}</h3>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="icon"
-                  className="text-black hover:text-black hover:bg-neutral-100 dark:text-white dark:hover:text-white dark:hover:bg-neutral-800 opacity-100"
+                  className="icon-btn bg-transparent text-black hover:text-white hover:bg-black dark:text-white dark:hover:text-white dark:hover:bg-neutral-800 opacity-100"
                   onClick={() => {
                     setEditing(e);
                     setShowDialog(true);
                   }}
                 >
-                  <PencilLine size={16} color={theme === 'dark' ? '#ffffff' : '#000000'} />
+                  <PencilLine size={16} />
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="text-black hover:text-black hover:bg-white dark:text-white dark:hover:text-white dark:hover:bg-neutral-800 opacity-100"
+                  className="icon-btn bg-transparent text-black hover:text-white hover:bg-black dark:text-white dark:hover:text-white dark:hover:bg-neutral-800 opacity-100"
                   onClick={() => setDeleteId(e._id!)}
                 >
-                  <Trash2 size={16} color={theme === 'dark' ? '#ffffff' : '#000000'} />
+                  <Trash2 size={16} />
                 </Button>
               </div>
             </div>
-            <p className="text-sm text-neutral-900 dark:text-neutral-300">{e.description}</p>
+            <p className={`va-desc text-sm text-black dark:text-neutral-300 break-anywhere line-clamp-3`}>{e.description}</p>
+            {e.description && e.description.length > 200 && (
+              <button
+                className="mt-1 text-xs text-[var(--accent-color)] underline"
+                onClick={() => setViewing(e)}
+              >
+                Read more
+              </button>
+            )}
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-[var(--accent-color)]/10 px-2 py-0.5 text-xs text-[var(--accent-color)]">{e.category}</span>
               {e.tags?.map((t, i) => (
-                <span key={i} className="rounded-full border px-2 py-0.5 text-xs dark:border-neutral-800">
+                <span
+                  key={`${t}-${i}`}
+                  className="tag-chip rounded-full border px-2 py-0.5 text-xs text-black border-neutral-200 bg-neutral-100 dark:text-neutral-200 dark:border-neutral-800 dark:bg-transparent"
+                >
                   {t}
                 </span>
               ))}
@@ -391,11 +444,11 @@ export function App() {
             <Textarea name="description" rows={4} defaultValue={editing?.description} />
           </div>
           <div className="grid gap-1.5">
-            <label className="text-sm">Category</label>
-            <Input name="category" defaultValue={editing?.category || 'General'} />
+            <label className="text-sm">Category <span className="text-xs text-neutral-500">(max {CATEGORY_MAX})</span></label>
+            <Input name="category" defaultValue={editing?.category || 'General'} maxLength={CATEGORY_MAX} />
           </div>
           <div className="grid gap-1.5">
-            <label className="text-sm">Tags (comma separated)</label>
+            <label className="text-sm">Tags (comma separated) <span className="text-xs text-neutral-500">(max {TAGS_MAX} tags, {TAG_MAX} chars/tag)</span></label>
             <Input name="tags" defaultValue={editing?.tags?.join(', ')} />
           </div>
           <div className="grid gap-1.5">
@@ -411,6 +464,35 @@ export function App() {
             </Button>
           </div>
         </form>
+      </Dialog>
+
+      {/* Read-only viewer */}
+      <Dialog open={!!viewing} onOpenChange={(v) => { if (!v) setViewing(null); }}>
+        {viewing && (
+          <div className="space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="text-xl font-semibold break-anywhere">{viewing.title}</h2>
+              <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <span className="rounded-full bg-[var(--accent-color)]/10 px-2 py-0.5 text-[var(--accent-color)]">{viewing.category}</span>
+              {viewing.tags?.map((t, i) => (
+                <span key={i} className="rounded-full border px-2 py-0.5 dark:border-neutral-800">{t}</span>
+              ))}
+              {viewing.link ? (
+                <a className="underline" href={/^https?:\/\//i.test(viewing.link) ? viewing.link : `https://${viewing.link}`} target="_blank" rel="noopener noreferrer">
+                  Open link
+                </a>
+              ) : null}
+            </div>
+            <div className="max-h-80 overflow-auto rounded-md border p-3 text-sm dark:border-neutral-800">
+              <p className="whitespace-pre-wrap break-anywhere">{viewing.description}</p>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={() => setViewing(null)}>Close</Button>
+            </div>
+          </div>
+        )}
       </Dialog>
 
       <AlertDialog
