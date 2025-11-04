@@ -16,40 +16,161 @@ html.dark {
 }
 
 body {
-	min-height: 100vh;
-	background-color: hsl(var(--background));
-	color: hsl(var(--foreground));
+  min-height: 100vh;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 * {
-	border-color: hsl(var(--border));
+  border-color: hsl(var(--border));
 }
 
-/* Enforce light-mode backgrounds for key surfaces */
-html:not(.dark) .va-card { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
-html:not(.dark) input, html:not(.dark) textarea { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
-html:not(.dark) ::placeholder { color: #6b7280 !important; }
-/* Force auth toggle styling in light mode */
-html:not(.dark) .auth-toggle { color: #000 !important; background-color: #fff !important; border-color: #e5e7eb !important; }
-html:not(.dark) .auth-toggle:hover { color: #fff !important; background-color: #000 !important; }
-/* Ensure Dialog stays light in light mode */
-html:not(.dark) .va-dialog { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
+/* ---------------------- */
+/*  LIGHT MODE OVERRIDES  */
+/* ---------------------- */
+html:not(.dark) .va-card {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
 
-/* Line clamp helpers (no plugin) */
-.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.break-anywhere { overflow-wrap: anywhere; word-break: break-word; }
+html:not(.dark) input,
+html:not(.dark) textarea {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+html:not(.dark) ::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Force auth toggle styling in light mode */
+html:not(.dark) .auth-toggle {
+  color: #000 !important;
+  background-color: #fff !important;
+  border-color: #e5e7eb !important;
+}
+html:not(.dark) .auth-toggle:hover {
+  color: #fff !important;
+  background-color: #000 !important;
+}
+
+/* Ensure Dialog stays light in light mode */
+html:not(.dark) .va-dialog {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
 
 /* Force black text for description and tags in light mode */
-html:not(.dark) .va-desc { color: #000 !important; }
-html:not(.dark) .tag-chip { color: #000 !important; }
-html:not(.dark) .va-alert { background-color: #ffffff !important; color: #111827 !important; border-color: #e5e7eb !important; }
+html:not(.dark) .va-desc {
+  color: #000 !important;
+}
+html:not(.dark) .tag-chip {
+  color: #000 !important;
+}
+html:not(.dark) .va-alert {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
 
 /* Ensure icon buttons are black by default in light mode and flip to white on hover */
-html:not(.dark) .icon-btn { color: #000 !important; background-color: transparent !important; }
-html:not(.dark) .icon-btn:hover { color: #fff !important; background-color: #000 !important; }
-html.dark .icon-btn { color: #fff !important; background-color: transparent !important; }
-html.dark .icon-btn:hover { color: #fff !important; background-color: #262626 !important; }
+html:not(.dark) .icon-btn {
+  color: #000 !important;
+  background-color: transparent !important;
+}
+html:not(.dark) .icon-btn:hover {
+  color: #fff !important;
+  background-color: #000 !important;
+}
 
+/* ---------------------- */
+/*  DARK MODE OVERRIDES   */
+/* ---------------------- */
+html.dark .va-card {
+  background-color: #171717 !important;
+  color: #f5f5f5 !important;
+  border-color: #262626 !important;
+}
 
+html.dark .va-dialog {
+  background-color: #171717 !important;
+  color: #f5f5f5 !important;
+  border-color: #262626 !important;
+}
+
+html.dark .va-alert {
+  background-color: #171717 !important;
+  color: #f5f5f5 !important;
+  border-color: #262626 !important;
+}
+
+html.dark .icon-btn {
+  color: #fff !important;
+  background-color: transparent !important;
+}
+html.dark .icon-btn:hover {
+  color: #fff !important;
+  background-color: #262626 !important;
+}
+
+/* ---------------------- */
+/*  Utility Helpers       */
+/* ---------------------- */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.break-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ---------------------- */
+/*  Dialog Outline Button */
+/* ---------------------- */
+/* Ensure outline buttons inside dialogs are visible in both themes */
+html:not(.dark) .va-dialog button[variant='outline'],
+html:not(.dark) .va-dialog .border {
+  color: #000 !important;
+  background-color: #fff !important;
+  border-color: #d1d5db !important;
+}
+
+/* Hover effect for light mode */
+html:not(.dark) .va-dialog button[variant='outline']:hover,
+html:not(.dark) .va-dialog .border:hover {
+  background-color: #f3f4f6 !important; /* light gray hover */
+  color: #000 !important;
+}
+
+/* Dark mode outline buttons */
+html.dark .va-dialog button[variant='outline'],
+html.dark .va-dialog .border {
+  color: #fff !important;
+  background-color: #171717 !important;
+  border-color: #262626 !important;
+}
+
+/* Hover effect for dark mode */
+html.dark .va-dialog button[variant='outline']:hover,
+html.dark .va-dialog .border:hover {
+  background-color: #262626 !important; /* slightly lighter dark gray */
+  color: #fff !important;
+}
