@@ -12,7 +12,7 @@ export function AuthForm({ onAuthed }: { onAuthed?: () => void }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
-	const { theme, setTheme } = useTheme();
+	const { theme, toggleTheme } = useTheme();
 
 	const submit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -36,7 +36,7 @@ export function AuthForm({ onAuthed }: { onAuthed?: () => void }) {
 		<div className="mx-auto mt-24 max-w-sm rounded-lg border p-6 dark:border-neutral-800">
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-xl font-semibold">{mode === 'login' ? 'Login' : 'Create account'}</h2>
-				<Button aria-label="Toggle theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} size="icon" variant="outline" className="icon-btn bg-transparent text-neutral-900 hover:text-white hover:bg-black dark:text-neutral-100 dark:hover:bg-neutral-800">
+				<Button aria-label="Toggle theme" onClick={toggleTheme} size="icon" variant="outline" className="icon-btn bg-transparent text-neutral-900 hover:text-white hover:bg-black dark:text-neutral-100 dark:hover:bg-neutral-800">
 					{theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
 				</Button>
 			</div>

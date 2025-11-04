@@ -12,7 +12,13 @@ export function useTheme() {
 		if (isDark) root.classList.add('dark');
 	}, [theme]);
 
-	return { theme, setTheme };
+	const toggleTheme = () => {
+		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		const isDarkNow = theme === 'system' ? prefersDark : theme === 'dark';
+		setTheme(isDarkNow ? 'light' : 'dark');
+	};
+
+	return { theme, setTheme, toggleTheme };
 }
 
 
